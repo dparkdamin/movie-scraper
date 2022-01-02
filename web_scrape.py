@@ -12,18 +12,22 @@ list = []
 
 for i in range(len(movies)):
     title_raw = [b.text for b in movies[i].select('a')]
-    title = title_raw[0]
-    # ratings = [b.attrs.get('data-value') for b in soup.select('div.ratings-bar strong')]
-    year = [b.text for b in movies[i].select('h3.lister-item-header span[class="lister-item-year text-muted unbold"]')]
-    runtime = [b.text for b in movies[i].select('p.text-muted span[class=runtime]')]
-    mprating = [b.text for b in movies[i].select('p.text-muted span[class=certificate]')]
-    description_raw = [b.text for b in movies[i].select('div.lister-item-content p[class="text-muted"]')]
-    description = description_raw[1::2]
-    rating = [b.attrs.get('data-value') for b in movies[i].select('div[class="inline-block ratings-imdb-rating"]')]
-    # votes = [b.attrs.get('data-value') for b in soup.select('td.ratingColumn strong')]
-    # print(title, "\n", year, "\n", runtime, "\n", mprating, "\n")
+    title = str(title_raw[0])
+    year = str([b.text for b in movies[i].select('h3.lister-item-header span[class="lister-item-year text-muted unbold"]')])
+    year = re.sub("\D", "", year)[0:4]
+    runtime = str([b.text for b in movies[i].select('p.text-muted span[class=runtime]')])
+    runtime = re.sub("\D", "", runtime)
+    mprating = str([b.text for b in movies[i].select('p.text-muted span[class=certificate]')])
+    mprating = mprating.strip("[]'")
+    description = [b.text for b in movies[i].select('div.lister-item-content p[class="text-muted"]')]
+    description = str(description[1::2])
+    description = description.strip("[]'\"").lstrip("\\n")
+    rating = str([b.attrs.get('data-value') for b in movies[i].select('div[class="inline-block ratings-imdb-rating"]')])
+    rating = rating.strip("[]'")
+    rank = str(i + 1)
 
-    data = {"title": title,
+    data = {"rank": rank,
+            "title": title,
             "year": year,
             "runtime": runtime,
             "mprating": mprating,
@@ -32,24 +36,7 @@ for i in range(len(movies)):
 
     list.append(data)
 
-print(list[0])
-# create a empty list for storing
-# movie information
-# list = []
- 
-# Iterating over movies to extract
-# each movie's details
-# for index in range(0, len(movies)):
-   
-#     data = {"movie_title": movie_title,
-#             "year": year,
-#             "rank": rank,
-#             "rating": ratings[index],
-#             "vote": votes[index],
-#             "link": links[index]}
-#     list.append(data)
-
-#     # printing movie details with its rating.
-# for movie in list:
-#     print(movie['rank'], '-', movie['movie_title'], '('+movie['year'] +
-#           ') -', movie['rating'])
+for movie in list:
+    print("Rank: " + movie['rank'] + "\nTitle: " + movie['title'] + "\nRelease Year: " + movie['year'] + "\nRuntime: " + 
+    movie['runtime'] + " minutes" + "\nMotion Picture Rating: " + movie['mprating'] + "\nDescription: " + movie['description'] + 
+    "\nRating: " + movie['rating'] + "\n")
