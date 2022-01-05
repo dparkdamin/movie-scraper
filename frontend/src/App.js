@@ -7,7 +7,7 @@ function App() {
 
   const [genre, setGenre] = useState("comedy");
   const [count, setCount] = useState(10);
-  const movies = [{"title": "hi", "rating": "0"}, {"title": "what", "rating": "2"}]
+  let movies = [{"title": "hi", "rating": "0"}, {"title": "what", "rating": "2"}]
 
   const tableData = movies.map((movie) => {
     return <tr>
@@ -17,16 +17,18 @@ function App() {
   })
 
   const getMovies = async values => {
-    const params_str = {"movie": values[0], "count": values[1]}
+    const params_str = {"genre": values[0]}
     const params = new URLSearchParams(params_str).toString();
-    const server_url = "http://127.0.0.1:8000/" + "?" + params;
+    const server_url = "http://127.0.0.1:8000/get_movies" + "?" + params;
     console.log(server_url)
     
     const res = await fetch({
       url: server_url,
       method: "GET",
     });
+    console.log(res)
     const data = await res.json();
+    
     movies = data;
   };
 
